@@ -25,14 +25,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void initial() {
         mColumnBarChartView = findViewById(R.id.columnBarChartView);
-        mColumnBarChartView.addColumnData(new ColumnBarChartView.ColumnDataFrom("不及格", 5, Color.YELLOW));
+        mColumnBarChartView.addColumnData(new ColumnBarChartView.ColumnDataFrom("不及格", 5, R.drawable.column_background));
         mColumnBarChartView.addColumnData(new ColumnBarChartView.ColumnDataFrom("及格", 15, Color.RED));
         mColumnBarChartView.addColumnData(new ColumnBarChartView.ColumnDataFrom("优秀", 10, Color.BLUE));
     }
 
     public void addRandomData(View view) {
         int number = (int)(Math.random()*40+5);
-        mColumnBarChartView.addColumnData(new ColumnBarChartView.ColumnDataFrom("随机的 " + number, number, getRandColorCode()));
+        mColumnBarChartView.addColumnData(new ColumnBarChartView.ColumnDataFrom("随机 " + number, number, getRandColorCode()));
     }
 
     public void deleteRandomData(View view) {

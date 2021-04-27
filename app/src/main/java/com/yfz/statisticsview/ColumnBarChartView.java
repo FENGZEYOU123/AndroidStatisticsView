@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
 import androidx.annotation.Nullable;
@@ -119,8 +120,17 @@ public class ColumnBarChartView extends View {
             mRectF.bottom=mRectF.bottom-dip2px(mContext,(mTextRect.bottom-mTextRect.top)); //柱状底部位置=组件底部-文字高度
             mRectF.top= mRectF.bottom-mHeight*mArray.get(i).mNumber +dip2px(mContext,(mTextRect.bottom-mTextRect.top+2)) ; //柱状高度=数值的平均高度值*柱状数值
         }
-        mPaint.setColor(mArray.get(i).mColor); //柱状颜色
-        canvas.drawRect(mRectF,mPaint);
+        Drawable drawable;
+        try{
+            drawable=getResources().getDrawable(mArray.get(i).mColorOrDrawable);
+            drawable.setBounds((int)mRectF.left,(int)mRectF.top,(int)mRectF.right,(int)mRectF.bottom);
+            drawable.draw(canvas);
+        }catch (Exception e){
+            mPaint.setColor(mArray.get(i).mColorOrDrawable); //柱状颜色
+            canvas.drawRect(mRectF,mPaint);
+        }
+
+
     }
 
     /**
@@ -141,12 +151,29 @@ public class ColumnBarChartView extends View {
         }
     }
     /**
+     * 向外提供修改数据的方法
+     */
+    public void editColumnData(String ColumnName,String name,float number,int color){
+        if(null != mArray){
+            if(mArray.contains(ColumnName)){
+                for(int i=0;i<mArray.size();i++){
+                    if(mArray.get(i).mMame.equals(ColumnName)){
+                        mArray.get(i).mMame=name;
+                        mArray.get(i).mNumber=number;
+                        mArray.get(i).mColorOrDrawable =color;
+                    }
+                }
+                refreshUI();
+            }
+        }
+    }
+    /**
      * 向外提供删除数据的方法
      */
-    public void deleteColumnData(String name){
+    public void deleteColumnData(String ColumnName){
         if(null != mArray){
-            if(mArray.contains(name)){
-                mArray.remove(name);
+            if(mArray.contains(ColumnName)){
+                mArray.remove(ColumnName);
                 refreshUI();
             }
         }
@@ -170,13 +197,14 @@ public class ColumnBarChartView extends View {
     public static class ColumnDataFrom {
         String mMame;
         float mNumber;
-        int mColor;
-        public ColumnDataFrom(String name,float number,int color){
+        int mColorOrDrawable;
+        public ColumnDataFrom(String name,float number,int colorOrDrawable){
             mMame=name;
             mNumber=number;
-            mColor=color;
+            mColorOrDrawable =colorOrDrawable;
         }
     }
+
     //刷新UI
     private void refreshUI(){
         this.invalidate();
