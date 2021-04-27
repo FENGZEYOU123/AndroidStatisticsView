@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void addRandomData(View view) {
-        int number = (int)(Math.random()*30+5);
+        int number = (int)(Math.random()*40+5);
         mColumnBarChartView.addColumnData(new ColumnBarChartView.ColumnDataFrom("随机的 " + number, number, getRandColorCode()));
     }
 

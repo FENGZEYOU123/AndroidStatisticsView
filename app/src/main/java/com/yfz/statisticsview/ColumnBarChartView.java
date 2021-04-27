@@ -116,9 +116,11 @@ public class ColumnBarChartView extends View {
      */
     public void deleteColumnData(int index){
         if(null != mArray){
-            if(mArray.size()>index){
-                mArray.remove(index);
-                refreshUI();
+            if( mArray.size()>index ){
+               if(null != mArray.get(index) ){
+                    mArray.remove(index);
+                    refreshUI();
+                }
             }
         }
     }
