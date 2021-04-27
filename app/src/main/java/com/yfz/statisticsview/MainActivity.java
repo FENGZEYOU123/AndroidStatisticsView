@@ -10,8 +10,7 @@ import android.view.View;
 import java.util.Random;
 /**
  * 作者：游丰泽
- * 简介：统计view-柱状图-用直观的方式展示数据内容
- * android需求,交流请加wx：yfz_oom
+ * 简介：统计view-柱状图-用图形方式更直观的展示数据内容
  */
 public class MainActivity extends AppCompatActivity {
     private ColumnBarChartView mColumnBarChartView;
@@ -25,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initial() {
         mColumnBarChartView = findViewById(R.id.columnBarChartView);
-        mColumnBarChartView.addColumnData(new ColumnBarChartView.ColumnDataFrom("不及格", 5, R.drawable.column_background));
+        mColumnBarChartView.addColumnData(new ColumnBarChartView.ColumnDataFrom("不及格", 5, Color.YELLOW));
         mColumnBarChartView.addColumnData(new ColumnBarChartView.ColumnDataFrom("及格", 15, Color.RED));
         mColumnBarChartView.addColumnData(new ColumnBarChartView.ColumnDataFrom("优秀", 10, Color.BLUE));
     }
