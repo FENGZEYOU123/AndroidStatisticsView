@@ -8,7 +8,11 @@ import android.util.Log;
 import android.view.View;
 
 import java.util.Random;
-
+/**
+ * 作者：游丰泽
+ * 简介：统计view-柱状图-用直观的方式展示数据内容
+ * android需求,交流请加wx：yfz_oom
+ */
 public class MainActivity extends AppCompatActivity {
     private ColumnBarChartView mColumnBarChartView;
 
