@@ -5,7 +5,5 @@
         <attr name="ColumnBarChart_margin" format="reference|dimension|integer"></attr>
         <attr name="ColumnBarChart_displayData" format="boolean"></attr>
         <attr name="ColumnBarChart_textColor" format="reference|color|integer|dimension"></attr>
-        <attr name="ColumnBarChart_textSize" format="reference|float|dimension|integer"></attr>
-
     </declare-styleable>
 </resources>

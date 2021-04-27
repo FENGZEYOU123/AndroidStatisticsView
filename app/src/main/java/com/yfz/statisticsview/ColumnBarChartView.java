@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -24,8 +23,6 @@ public class ColumnBarChartView extends View {
     private Paint mPaint=new Paint();
     //记录绘制数据，key名字,value数量
     private ArrayList<ColumnDataFrom> mArray=new ArrayList<>();
-    //柱状间距
-    private int mMargin=20;
     //柱状宽度
     private float mWidth=0;
     //柱状高度
@@ -34,12 +31,19 @@ public class ColumnBarChartView extends View {
     private RectF mRectF = new RectF();
     //数据名字位置Rect
     private Rect mTextRect=new Rect();
-    //数据显示
-    private boolean mDisplayData =false;
-    //数据文字大小
-    private float mTextSize=20;
-    //数据文字颜色
+    /**
+     * 设置柱状间距
+     */
+    private int mMargin=20;
+    /**
+     * 设置是否显示数据（柱状名字-数值）
+     */
+    private boolean mDisplayData =true;
+    /**
+     * 设置文字颜色
+     */
     private int mTextColor= Color.BLACK;
+
     public ColumnBarChartView(Context context) {
         super(context);
         initial(context);
@@ -51,7 +55,6 @@ public class ColumnBarChartView extends View {
         mMargin=typedArray.getInteger(R.styleable.ColumnBarChartView_ColumnBarChart_margin,mMargin);
         mDisplayData =typedArray.getBoolean(R.styleable.ColumnBarChartView_ColumnBarChart_displayData, mDisplayData);
         mTextColor =typedArray.getInteger(R.styleable.ColumnBarChartView_ColumnBarChart_textColor, mTextColor);
-        mTextSize =typedArray.getFloat(R.styleable.ColumnBarChartView_ColumnBarChart_textSize, mTextSize);
         initial(context);
     }
 
@@ -80,16 +83,16 @@ public class ColumnBarChartView extends View {
             mRectF.top= mRectF.bottom-mHeight*mArray.get(i).mNumber ; //柱状高度=数值的平均高度值*柱状数值
             if(mDisplayData){ //如果设置了展示名字，则绘制名字
                 onDrawName(canvas,i); //画柱状名字
+                onDrawNumber(canvas,i); //画柱状数值
             }
             onDrawColumn(canvas,i); //画柱状图形
-
         }
     }
 
     //绘制-柱状名字
     private void onDrawName(Canvas canvas,int i){
         mPaint.setTextSize(dip2px(mContext, (float) Math.sqrt(mWidth)));
-        mPaint.getTextBounds(mArray.get(i).mMame, 0, mArray.get(i).mMame.length(), mTextRect); //计算文字位置,处于柱状中间
+        mPaint.getTextBounds(mArray.get(i).mMame, 0, mArray.get(i).mMame.length(), mTextRect); //计算文字位置,处于柱状宽度中间
         mPaint.setColor(mTextColor);
         canvas.drawText(   //柱状名字
                 mArray.get(i).mMame,
@@ -98,11 +101,23 @@ public class ColumnBarChartView extends View {
                 mPaint);
 
     }
+    //绘制-柱状数值
+    private void onDrawNumber(Canvas canvas,int i){
+        mPaint.setTextSize(dip2px(mContext, (float) Math.sqrt(mWidth)));
+        mPaint.getTextBounds(String.valueOf(mArray.get(i).mNumber), 0, String.valueOf(mArray.get(i).mNumber).length(), mTextRect); //计算文字位置,处于柱状宽度中间
+        mPaint.setColor(mTextColor);
+        canvas.drawText(   //柱状名字
+                String.valueOf(mArray.get(i).mNumber),
+                (mRectF.left+mRectF.right)/2 - (mTextRect.left+mTextRect.right)/2,
+                mRectF.top,
+                mPaint);
+
+    }
     //绘制-柱状图形
     private void onDrawColumn(Canvas canvas,int i){
         if(mDisplayData) { //如果设置了展示名字，则绘制柱状图形的位置要在文字之上
-            mRectF.bottom=mRectF.bottom-dip2px(mContext,(mTextRect.bottom-mTextRect.top));
-            mRectF.top=mRectF.bottom-mRectF.top;
+            mRectF.bottom=mRectF.bottom-dip2px(mContext,(mTextRect.bottom-mTextRect.top)); //柱状底部位置=组件底部-文字高度
+            mRectF.top= mRectF.bottom-mHeight*mArray.get(i).mNumber +dip2px(mContext,(mTextRect.bottom-mTextRect.top+2)) ; //柱状高度=数值的平均高度值*柱状数值
         }
         mPaint.setColor(mArray.get(i).mColor); //柱状颜色
         canvas.drawRect(mRectF,mPaint);
