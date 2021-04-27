@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable
+        name="ColumnBarChartView">
+        <attr name="ColumnBarChart_margin" format="integer"></attr>
+        <attr name="ColumnBarChart_displayName" format="boolean"></attr>
+
+    </declare-styleable>
+</resources>
