@@ -10,20 +10,22 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
+
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
+
 /**
  * 作者：游丰泽
- * 简介：统计view-柱状图-用直观的方式展示数据内容
+ * 简介：统计view-饼状图-用直观的方式展示数据内容
  * android需求,交流请加wx：yfz_oom
  */
-public class ColumnBarChartView extends View {
+public class PieChartView extends View {
     private Context mContext;
     //画笔
     private Paint mPaint=new Paint();
     //记录绘制数据，key名字,value数量
-    private ArrayList<ColumnDataFrom> mArray=new ArrayList<>();
+    private ArrayList<ColumnBarChartView.ColumnDataFrom> mArray=new ArrayList<>();
     //柱状宽度
     private float mWidth=0;
     //柱状高度
@@ -45,11 +47,11 @@ public class ColumnBarChartView extends View {
      */
     private int mTextColor= Color.BLACK;
 
-    public ColumnBarChartView(Context context) {
+    public PieChartView(Context context) {
         super(context);
         initial(context);
     }
-    public ColumnBarChartView(Context context, @Nullable AttributeSet attrs) {
+    public PieChartView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         TypedArray typedArray=context.obtainStyledAttributes(attrs, R.styleable.ColumnBarChartView);
         //设置柱状的间距
@@ -62,6 +64,7 @@ public class ColumnBarChartView extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
     }
 
     private void initial(Context context){
@@ -74,20 +77,18 @@ public class ColumnBarChartView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if(getSize()>=1) {
-            mWidth = (getWidth() - (mMargin * (getSize() - 1))) / getSize(); //计算每个柱状宽度
-            mHeight = (getHeight() / getNumber()); //计算柱状数值的平均高度值
-            for (int i = 0; i < mArray.size(); i++) {
-                mRectF.left = i * (mWidth + mMargin);
-                mRectF.right = mRectF.left + mWidth;
-                mRectF.bottom = getHeight();
-                mRectF.top = mRectF.bottom - mHeight * mArray.get(i).mNumber; //柱状高度=数值的平均高度值*柱状数值
-                if (mDisplayData) { //如果设置了展示名字，则绘制名字
-                    onDrawName(canvas, i); //画柱状名字
-                    onDrawNumber(canvas, i); //画柱状数值
-                }
-                onDrawColumn(canvas, i); //画柱状图形
+        mWidth  = ( getWidth() - (mMargin*(getSize()-1)) ) / getSize(); //计算每个柱状宽度
+        mHeight = ( getHeight() / getNumber() ); //计算柱状数值的平均高度值
+        for(int i=0;i<mArray.size();i++){
+            mRectF.left= i*(mWidth+mMargin);
+            mRectF.right= mRectF.left+mWidth;
+            mRectF.bottom=getHeight();
+            mRectF.top= mRectF.bottom-mHeight*mArray.get(i).mNumber ; //柱状高度=数值的平均高度值*柱状数值
+            if(mDisplayData){ //如果设置了展示名字，则绘制名字
+                onDrawName(canvas,i); //画柱状名字
+                onDrawNumber(canvas,i); //画柱状数值
             }
+            onDrawColumn(canvas,i); //画柱状图形
         }
     }
 
@@ -143,7 +144,7 @@ public class ColumnBarChartView extends View {
     /**
      * 向外提供添加数据的方法,如果数据名字一样则被替换
      */
-    public void addColumnData(ColumnDataFrom columnDataFrom){
+    public void addColumnData(ColumnBarChartView.ColumnDataFrom columnDataFrom){
         if(null != mArray){
             if(!mArray.contains(columnDataFrom)) {
                 mArray.add(columnDataFrom);
@@ -185,7 +186,7 @@ public class ColumnBarChartView extends View {
     public void deleteColumnData(int ColumnIndex){
         if(null != mArray){
             if( mArray.size()>ColumnIndex){
-               if(null != mArray.get(ColumnIndex) ){
+                if(null != mArray.get(ColumnIndex) ){
                     mArray.remove(ColumnIndex);
                     refreshUI();
                 }
@@ -229,7 +230,7 @@ public class ColumnBarChartView extends View {
      */
     public float getNumber(){
         float totalNumber=0;
-        for(ColumnDataFrom columnDataFrom : mArray){
+        for(ColumnBarChartView.ColumnDataFrom columnDataFrom : mArray){
             totalNumber= totalNumber+ columnDataFrom.mNumber;
         }
         return totalNumber;

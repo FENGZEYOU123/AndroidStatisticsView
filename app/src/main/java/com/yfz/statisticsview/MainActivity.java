@@ -1,12 +1,18 @@
 package com.yfz.statisticsview;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
+import java.util.ArrayList;
 import java.util.Random;
 /**
  * 作者：游丰泽
@@ -14,6 +20,11 @@ import java.util.Random;
  */
 public class MainActivity extends AppCompatActivity {
     private ColumnBarChartView mColumnBarChartView;
+    private PieChartView mPieChatView;
+    private ViewPager mViewPager;
+    private LayoutInflater layoutInflater;
+    private ArrayList<View> mList=new ArrayList<>();
+    private View mViewColumn,mViewPie;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,10 +34,43 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initial() {
-        mColumnBarChartView = findViewById(R.id.columnBarChartView);
+        mViewPager=findViewById(R.id.viewPager);
+        layoutInflater=getLayoutInflater().from(this);
+        mViewColumn=layoutInflater.inflate(R.layout.columb_bar_chat_view,null);
+        mViewPie=layoutInflater.inflate(R.layout.pie_bar_chat_view,null);
+        mList.add(mViewColumn);
+        mList.add(mViewPie);
+        mViewPager.setAdapter(new ViewPagerAdapter());
+        mViewPager.setOffscreenPageLimit(mList.size()-1);
+        mColumnBarChartView = mViewColumn.findViewById(R.id.columnBarChartView);
         mColumnBarChartView.addColumnData(new ColumnBarChartView.ColumnDataFrom("不及格", 5, Color.YELLOW));
         mColumnBarChartView.addColumnData(new ColumnBarChartView.ColumnDataFrom("及格", 15, Color.RED));
         mColumnBarChartView.addColumnData(new ColumnBarChartView.ColumnDataFrom("优秀", 10, Color.BLUE));
+
+        mPieChatView=mViewPie.findViewById(R.id.pieChatView);
+        mPieChatView.addColumnData(new ColumnBarChartView.ColumnDataFrom("不及格", 5, Color.YELLOW));
+        mPieChatView.addColumnData(new ColumnBarChartView.ColumnDataFrom("及格", 15, Color.RED));
+        mPieChatView.addColumnData(new ColumnBarChartView.ColumnDataFrom("优秀", 10, Color.BLUE));
+    }
+
+    class ViewPagerAdapter extends PagerAdapter {
+        @Override
+        public int getCount() {
+            return mList.size();
+        }
+        @Override
+        public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
+            return view==object;
+        }
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            container.addView(mList.get(position));
+            return mList.get(position);
+        }
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            container.removeView(mList.get(position));
+        }
     }
 
     public void addRandomData(View view) {

@@ -6,31 +6,10 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <Button
-        android:text="随机添加数据"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:onClick="addRandomData"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-    </Button>
-    <Button
-        android:text="随机删除数据"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:onClick="deleteRandomData"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-    </Button>
-
-    <com.yfz.statisticsview.ColumnBarChartView
-        android:id="@+id/columnBarChartView"
-        android:layout_margin="24dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
-        android:layout_height="500dp">
-    </com.yfz.statisticsview.ColumnBarChartView>
+        android:layout_height="match_parent">
+    </androidx.viewpager.widget.ViewPager>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
