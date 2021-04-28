@@ -199,6 +199,8 @@ public class ColumnBarChartView extends View {
         String mMame;
         float mNumber;
         int mColorOrDrawable;
+
+
         public ColumnDataFrom(String name,float number,int colorOrDrawable){
             mMame=name;
             mNumber=number;

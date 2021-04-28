@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -25,7 +24,7 @@ public class PieChartView extends View {
     //画笔
     private Paint mPaint=new Paint();
     //记录绘制数据，key名字,value数量
-    private ArrayList<ColumnBarChartView.ColumnDataFrom> mArray=new ArrayList<>();
+    private ArrayList<PieDataForm> mArray=new ArrayList<>();
     //柱状宽度
     private float mWidth=0;
     //柱状高度
@@ -34,6 +33,12 @@ public class PieChartView extends View {
     private RectF mRectF = new RectF();
     //数据名字位置Rect
     private Rect mTextRect=new Rect();
+    //总弧度
+    private final static int mRadian=360;
+    /**
+     * 碎片平均角度
+     */
+    private float mAngleAverage =0;
     /**
      * 设置柱状间距
      */
@@ -79,16 +84,26 @@ public class PieChartView extends View {
     protected void onDraw(Canvas canvas) {
         mWidth  = ( getWidth() - (mMargin*(getSize()-1)) ) / getSize(); //计算每个柱状宽度
         mHeight = ( getHeight() / getNumber() ); //计算柱状数值的平均高度值
+        mAngleAverage = mRadian/getNumber(); //计算饼的角度平均值
         for(int i=0;i<mArray.size();i++){
-            mRectF.left= i*(mWidth+mMargin);
-            mRectF.right= mRectF.left+mWidth;
-            mRectF.bottom=getHeight();
-            mRectF.top= mRectF.bottom-mHeight*mArray.get(i).mNumber ; //柱状高度=数值的平均高度值*柱状数值
-            if(mDisplayData){ //如果设置了展示名字，则绘制名字
-                onDrawName(canvas,i); //画柱状名字
-                onDrawNumber(canvas,i); //画柱状数值
+            float startAngle=0;
+            float sweepAngle=0;
+            if(i>=1) {
+                 startAngle = mArray.get(i-1).mSweepAngle;//后一个饼的开始角度=前一个饼的结束角度
             }
-            onDrawColumn(canvas,i); //画柱状图形
+            sweepAngle = mAngleAverage * mArray.get(i).mNumber;
+            mArray.get(i).mStartAngle=startAngle;
+            mArray.get(i).mSweepAngle=sweepAngle;
+            mRectF.left=0;
+            mRectF.top= 0;
+            mRectF.right= getWidth();
+            mRectF.bottom=getHeight();
+
+//            if(mDisplayData){ //如果设置了展示名字，则绘制名字
+//                onDrawName(canvas,i); //画柱状名字
+//                onDrawNumber(canvas,i); //画柱状数值
+//            }
+            onDrawPie(canvas,i, startAngle,sweepAngle); //画柱状图形
         }
     }
 
@@ -117,20 +132,9 @@ public class PieChartView extends View {
 
     }
     //绘制-柱状图形
-    private void onDrawColumn(Canvas canvas,int i){
-        if(mDisplayData) { //如果设置了展示名字，则绘制柱状图形的位置要在文字之上
-            mRectF.bottom=mRectF.bottom-dip2px(mContext,(mTextRect.bottom-mTextRect.top)); //柱状底部位置=组件底部-文字高度
-            mRectF.top= mRectF.bottom-mHeight*mArray.get(i).mNumber +dip2px(mContext,(mTextRect.bottom-mTextRect.top+2)) ; //柱状高度=数值的平均高度值*柱状数值
-        }
-        Drawable drawable;
-        try{
-            drawable=getResources().getDrawable(mArray.get(i).mColorOrDrawable);
-            drawable.setBounds((int)mRectF.left,(int)mRectF.top,(int)mRectF.right,(int)mRectF.bottom);
-            drawable.draw(canvas);
-        }catch (Exception e){
-            mPaint.setColor(mArray.get(i).mColorOrDrawable); //柱状颜色
-            canvas.drawRect(mRectF,mPaint);
-        }
+    private void onDrawPie(Canvas canvas, int i,float startAngle, float sweepAngle){
+       mPaint.setColor(mArray.get(i).mColorOrDrawable); //柱状颜色
+       canvas.drawArc(mRectF,startAngle,sweepAngle,true,mPaint);
 
 
     }
@@ -144,7 +148,7 @@ public class PieChartView extends View {
     /**
      * 向外提供添加数据的方法,如果数据名字一样则被替换
      */
-    public void addColumnData(ColumnBarChartView.ColumnDataFrom columnDataFrom){
+    public void addColumnData(PieDataForm columnDataFrom){
         if(null != mArray){
             if(!mArray.contains(columnDataFrom)) {
                 mArray.add(columnDataFrom);
@@ -172,10 +176,10 @@ public class PieChartView extends View {
     /**
      * 向外提供删除数据的方法
      */
-    public void deleteColumnData(String ColumnName){
+    public void deleteColumnData(String PieName){
         if(null != mArray){
-            if(mArray.contains(ColumnName)){
-                mArray.remove(ColumnName);
+            if(mArray.contains(PieName)){
+                mArray.remove(PieName);
                 refreshUI();
             }
         }
@@ -183,24 +187,26 @@ public class PieChartView extends View {
     /**
      * 向外提供删除数据的方法
      */
-    public void deleteColumnData(int ColumnIndex){
+    public void deleteColumnData(int PieIndex){
         if(null != mArray){
-            if( mArray.size()>ColumnIndex){
-                if(null != mArray.get(ColumnIndex) ){
-                    mArray.remove(ColumnIndex);
+            if( mArray.size()>PieIndex){
+                if(null != mArray.get(PieIndex) ){
+                    mArray.remove(PieIndex);
                     refreshUI();
                 }
             }
         }
     }
     /**
-     * 柱状数据表单
+     * 饼状数据表单
      */
-    public static class ColumnDataFrom {
+    public static class PieDataForm {
         String mMame;
         float mNumber;
         int mColorOrDrawable;
-        public ColumnDataFrom(String name,float number,int colorOrDrawable){
+        float mStartAngle=0;
+        float mSweepAngle=0;
+        public PieDataForm(String name, float number, int colorOrDrawable){
             mMame=name;
             mNumber=number;
             mColorOrDrawable =colorOrDrawable;
@@ -230,8 +236,8 @@ public class PieChartView extends View {
      */
     public float getNumber(){
         float totalNumber=0;
-        for(ColumnBarChartView.ColumnDataFrom columnDataFrom : mArray){
-            totalNumber= totalNumber+ columnDataFrom.mNumber;
+        for(PieDataForm pieDataForm : mArray){
+            totalNumber= totalNumber+ pieDataForm.mNumber;
         }
         return totalNumber;
     }

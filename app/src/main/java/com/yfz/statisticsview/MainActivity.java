@@ -38,8 +38,8 @@ public class MainActivity extends AppCompatActivity {
         layoutInflater=getLayoutInflater().from(this);
         mViewColumn=layoutInflater.inflate(R.layout.columb_bar_chat_view,null);
         mViewPie=layoutInflater.inflate(R.layout.pie_bar_chat_view,null);
-        mList.add(mViewColumn);
         mList.add(mViewPie);
+        mList.add(mViewColumn);
         mViewPager.setAdapter(new ViewPagerAdapter());
         mViewPager.setOffscreenPageLimit(mList.size()-1);
         mColumnBarChartView = mViewColumn.findViewById(R.id.columnBarChartView);
@@ -48,9 +48,9 @@ public class MainActivity extends AppCompatActivity {
         mColumnBarChartView.addColumnData(new ColumnBarChartView.ColumnDataFrom("优秀", 10, Color.BLUE));
 
         mPieChatView=mViewPie.findViewById(R.id.pieChatView);
-        mPieChatView.addColumnData(new ColumnBarChartView.ColumnDataFrom("不及格", 5, Color.YELLOW));
-        mPieChatView.addColumnData(new ColumnBarChartView.ColumnDataFrom("及格", 15, Color.RED));
-        mPieChatView.addColumnData(new ColumnBarChartView.ColumnDataFrom("优秀", 10, Color.BLUE));
+        mPieChatView.addColumnData(new PieChartView.PieDataForm("不及格", 5, Color.YELLOW));
+        mPieChatView.addColumnData(new PieChartView.PieDataForm("及格", 15, Color.RED));
+        mPieChatView.addColumnData(new PieChartView.PieDataForm("优秀", 10, Color.BLUE));
     }
 
     class ViewPagerAdapter extends PagerAdapter {
